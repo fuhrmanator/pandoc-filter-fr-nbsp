@@ -14,16 +14,27 @@ local function space_high_punctuation(inlines)
             -- inlines[i].text = inlines[i].text:gsub("[;:€%?!%%]", "\u{202f}%1")
             -- inlines[i].text = inlines[i].text:gsub("\u{00ab}", "%1\u{202f}")
             -- ends with high punctuation
-            if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub(-1),  '[;!%?%%:]') then
+            if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub(-1), '[;!%?%%:]') then
                 -- insert nbsp before last char
                 inlines[i].text = inlines[i].text:sub(1, -2) .. '\u{202f}' .. inlines[i].text:sub(-1)
-            else
-                -- unicode is a problem in patterns, so we just brute force it?
-                inlines[i].text = string.gsub(inlines[i].text, "€", '\u{202f}' .. "€")
-                inlines[i].text = string.gsub(inlines[i].text, "»", '\u{202f}' .. "»")
-                inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. '\u{202f}')
-                -- print('[debug] ' .. inlines[i].text)
             end
+            -- unicode is a problem in patterns, so we just brute force it?
+            inlines[i].text = string.gsub(inlines[i].text, "€", '\u{202f}' .. "€")
+            inlines[i].text = string.gsub(inlines[i].text, "»", '\u{202f}' .. "»")
+            inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. '\u{202f}')
+            -- print('[debug] ' .. inlines[i].text)
+        end
+        -- check for ':' after quoted text
+        -- print('[debug] i:' .. inlines[i].t)
+        -- if inlines[i+1] then 
+        --     print('[debug] i+1:' .. inlines[i+1].t)
+        -- end
+        if inlines[i+1] and inlines[i].t == 'Quoted' 
+            and inlines[i+1].t == 'Str' 
+            and inlines[i+1].text:match('[;!%?%%:]') then
+                inlines[i+1].text = '\u{202f}' .. inlines[i+1].text
+            -- skip the item we just spaced
+            i = i + 1
         end
         i = i + 1
     end
