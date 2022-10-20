@@ -6,14 +6,13 @@
 PANDOC_VERSION:must_be_at_least '2.9.2'
 
 
-local function space_high_punctuation(inlines)
+--- Copyright: © 2022 Christopher Fuhrman
+--- License: MIT – see LICENSE for details
+--- add non-breaking spaces according to high punctuation rules, similar to babel-french
+local function space_high_punctuation_and_quotes(inlines)
     local i = 1
     while inlines[i] do
         if inlines[i].t == 'Str' then
-            -- print('[debug] ' .. inlines[i].text)
-            -- inlines[i].text = inlines[i].text:gsub("[;:€%?!%%]", "\u{202f}%1")
-            -- inlines[i].text = inlines[i].text:gsub("\u{00ab}", "%1\u{202f}")
-            -- ends with high punctuation
             if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub(-1), '[;!%?%%:]') then
                 -- insert nbsp before last char
                 inlines[i].text = inlines[i].text:sub(1, -2) .. '\u{202f}' .. inlines[i].text:sub(-1)
@@ -22,13 +21,7 @@ local function space_high_punctuation(inlines)
             inlines[i].text = string.gsub(inlines[i].text, "€", '\u{202f}' .. "€")
             inlines[i].text = string.gsub(inlines[i].text, "»", '\u{202f}' .. "»")
             inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. '\u{202f}')
-            -- print('[debug] ' .. inlines[i].text)
         end
-        -- check for ':' after quoted text
-        -- print('[debug] i:' .. inlines[i].t)
-        -- if inlines[i+1] then 
-        --     print('[debug] i+1:' .. inlines[i+1].t)
-        -- end
         -- quotes, citation
         if inlines[i+1] and (inlines[i].t == 'Quoted' or inlines[i].t == 'Cite') 
             and inlines[i+1].t == 'Str' 
@@ -42,35 +35,6 @@ local function space_high_punctuation(inlines)
     return inlines
 end
 
-local function add_non_breaking_spaces(inlines)
-    local i = 1
-    
-    while inlines[i+2] do
-        if inlines[i].t == 'Str' and inlines[i+1].t == 'Space' and inlines[i+2].t == 'Str' then
-            if string.match(inlines[i+2].text,  '^[;!%?%%:€]')
-            or string.match(inlines[i].text, '%d$') and string.match(inlines[i+2].text, '^%d%d%d[^%d]*')
-            or string.match(inlines[i].text, '°$') and string.match(inlines[i+2].text, '^%d')
-            or string.match(inlines[i].text, '[+-]$') and string.match(inlines[i+2].text, '^%d') then
-                inlines[i].text = inlines[i].text .. '\u{202f}' .. inlines[i+2].text
-                inlines:remove(i+2)
-                inlines:remove(i+1)
-            elseif string.match(inlines[i].text, '%d$') and string.match(inlines[i+2].text, '^ans.*$')
-            or string.match(inlines[i].text, '%d$') and string.match(inlines[i+2].text, '^mill.*$')
-            or string.match(inlines[i].text, '%d$') and string.match(inlines[i+2].text, '^point.*$')
-            or string.match(inlines[i].text, '%d$') and string.match(inlines[i+2].text, '^ETP.*$') then
-                inlines[i].text = inlines[i].text .. '\u{00a0}' .. inlines[i+2].text
-                inlines:remove(i+2)
-                inlines:remove(i+1)
-            else
-                i = i+1
-            end
-        else
-            i = i+1
-        end
-    end
-  
-    return inlines
-end
 
 --- For HTML output, since the Narrow No-Break Spaces (U+202F) are not well supported
 --- by browsers (they are breakable), use this solution: https://stackoverflow.com/a/1570664
@@ -91,7 +55,7 @@ if FORMAT:match 'html' or FORMAT:match 'html5' then
     return {
         {
             Inlines = function(inlines)
-                inlines = space_high_punctuation(inlines)
+                inlines = space_high_punctuation_and_quotes(inlines)
                 inlines = wrap_nnbsp_in_span(inlines)
                 return inlines
             end
@@ -101,7 +65,7 @@ else
     return {
         {
             Inlines = function(inlines)
-                inlines = space_high_punctuation(inlines)
+                inlines = space_high_punctuation_and_quotes(inlines)
                 return inlines
             end
         }
