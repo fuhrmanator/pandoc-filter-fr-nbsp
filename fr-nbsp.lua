@@ -29,7 +29,8 @@ local function space_high_punctuation(inlines)
         -- if inlines[i+1] then 
         --     print('[debug] i+1:' .. inlines[i+1].t)
         -- end
-        if inlines[i+1] and inlines[i].t == 'Quoted' 
+        -- quotes, citation
+        if inlines[i+1] and (inlines[i].t == 'Quoted' or inlines[i].t == 'Cite') 
             and inlines[i+1].t == 'Str' 
             and inlines[i+1].text:match('[;!%?%%:]') then
                 inlines[i+1].text = '\u{202f}' .. inlines[i+1].text

@@ -22,4 +22,18 @@ Pandoc
       , Str "all\244\8239!"
       ]
   , Para [ Quoted DoubleQuote [ Str "Bonjour\8239!" ] ]
+  , Para
+      [ Cite
+          [ Citation
+              { citationId = "avge16a"
+              , citationPrefix = []
+              , citationSuffix = []
+              , citationMode = NormalCitation
+              , citationNoteNum = 1
+              , citationHash = 0
+              }
+          ]
+          [ Str "[@avge16a]" ]
+      , Str "\8239:"
+      ]
   ]
