@@ -21,4 +21,5 @@ Pandoc
       , Space
       , Str "all\244\8239!"
       ]
+  , Para [ Quoted DoubleQuote [ Str "Bonjour\8239!" ] ]
   ]

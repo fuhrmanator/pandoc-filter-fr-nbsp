@@ -19,3 +19,5 @@ d:
 «Bonjour»
 
 Voici un vrai cas: allô!
+
+"Bonjour!"
