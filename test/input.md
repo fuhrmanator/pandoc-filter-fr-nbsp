@@ -13,3 +13,5 @@ d:
 2€
 
 «Bonjour»
+
+Voici un vrai cas: allô!

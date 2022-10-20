@@ -8,4 +8,15 @@ Pandoc
   , Para [ Str "1\8239%" ]
   , Para [ Str "2\8239\8364" ]
   , Para [ Str "\171\8239Bonjour\8239\187" ]
+  , Para
+      [ Str "Voici"
+      , Space
+      , Str "un"
+      , Space
+      , Str "vrai"
+      , Space
+      , Str "cas\8239:"
+      , Space
+      , Str "all\244\8239!"
+      ]
   ]
