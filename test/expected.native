@@ -1,9 +1,11 @@
 Pandoc
   Meta { unMeta = fromList [] }
-  [ Para [ Str "a\8239;" ]
+  [ Para [ Str "!" ]
+  , Para [ Str "a\8239;" ]
   , Para [ Str "b\8239!" ]
   , Para [ Str "c\8239?" ]
   , Para [ Str "d\8239:" ]
   , Para [ Str "1\8239%" ]
   , Para [ Str "2\8239\8364" ]
+  , Para [ Str "\171\8239Bonjour\8239\187" ]
   ]

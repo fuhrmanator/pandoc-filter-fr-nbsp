@@ -5,6 +5,31 @@
 
 PANDOC_VERSION:must_be_at_least '2.9.2'
 
+
+local function space_high_punctuation(inlines)
+    local i = 1
+    while inlines[i] do
+        if inlines[i].t == 'Str' then
+            -- print('[debug] ' .. inlines[i].text)
+            -- inlines[i].text = inlines[i].text:gsub("[;:€%?!%%]", "\u{202f}%1")
+            -- inlines[i].text = inlines[i].text:gsub("\u{00ab}", "%1\u{202f}")
+            -- ends with high punctuation
+            if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub(-1),  '[;!%?%%:]') then
+                -- insert nbsp before last char
+                inlines[i].text = inlines[i].text:sub(1, -2) .. '\u{202f}' .. inlines[i].text:sub(-1)
+            else
+                -- unicode is a problem in patterns, so we just brute force it?
+                inlines[i].text = string.gsub(inlines[i].text, "€", '\u{202f}' .. "€")
+                inlines[i].text = string.gsub(inlines[i].text, "»", '\u{202f}' .. "»")
+                inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. '\u{202f}')
+                -- print('[debug] ' .. inlines[i].text)
+            end
+        end
+        i = i + 1
+    end
+    return inlines
+end
+
 local function add_non_breaking_spaces(inlines)
     local i = 1
     
@@ -54,7 +79,7 @@ if FORMAT:match 'html' or FORMAT:match 'html5' then
     return {
         {
             Inlines = function(inlines)
-                inlines = add_non_breaking_spaces(inlines)
+                inlines = space_high_punctuation(inlines)
                 inlines = wrap_nnbsp_in_span(inlines)
                 return inlines
             end
@@ -64,7 +89,7 @@ else
     return {
         {
             Inlines = function(inlines)
-                inlines = add_non_breaking_spaces(inlines)
+                inlines = space_high_punctuation(inlines)
                 return inlines
             end
         }
