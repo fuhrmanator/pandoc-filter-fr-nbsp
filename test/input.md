@@ -23,3 +23,5 @@ Voici un vrai cas: allô!
 "Bonjour!"
 
 [@avge16a]:
+
+[lien](https://example.com);

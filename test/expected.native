@@ -36,4 +36,11 @@ Pandoc
           [ Str "[@avge16a]" ]
       , Str "\8239:"
       ]
+  , Para
+      [ Link
+          ( "" , [] , [] )
+          [ Str "lien" ]
+          ( "https://example.com" , "" )
+      , Str "\8239;"
+      ]
   ]
