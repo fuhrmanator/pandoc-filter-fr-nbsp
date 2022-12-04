@@ -1,6 +1,7 @@
 `fr-nbsp`, a Pandoc Lua Filter for no-break spaces used in French typography
-(adapted by C. Fuhrman to work more like [babel-french](https://www.ctan.org/pkg/babel-french))
 ==================================================================
+
+(adapted by C. Fuhrman to work more like [babel-french](https://www.ctan.org/pkg/babel-french))
 
 [![GitHub build status][CI badge]][CI workflow]
 
