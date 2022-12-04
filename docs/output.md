@@ -24,6 +24,10 @@ d :
 
 `F` ;
 
+`\faBook `{=tex} ?
+
+`<i class="H">`{=html}`</i>`{=html} !
+
 « Bonjour »
 
 Voici un vrai cas : allô !
