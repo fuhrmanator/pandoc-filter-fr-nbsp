@@ -16,6 +16,8 @@ d:
 
 'B';
 
+*C*:
+
 «Bonjour»
 
 Voici un vrai cas: allô!

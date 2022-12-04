@@ -9,6 +9,7 @@ Pandoc
   , Para [ Str "2\8239\8364" ]
   , Para [ Quoted DoubleQuote [ Str "A" ] , Str "\8239:" ]
   , Para [ Quoted SingleQuote [ Str "B" ] , Str "\8239;" ]
+  , Para [ Emph [ Str "C" ] , Str "\8239:" ]
   , Para [ Str "\171\8239Bonjour\8239\187" ]
   , Para
       [ Str "Voici"
