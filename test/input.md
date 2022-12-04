@@ -18,6 +18,12 @@ d:
 
 *C*:
 
+**D**:
+
+~~E~~:
+
+`F`;
+
 «Bonjour»
 
 Voici un vrai cas: allô!
