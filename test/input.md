@@ -24,6 +24,10 @@ d:
 
 `F`;
 
+\faBook ?
+
+<i class="H"></i>!
+
 «Bonjour»
 
 Voici un vrai cas: allô!

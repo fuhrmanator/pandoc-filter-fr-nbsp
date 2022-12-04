@@ -13,6 +13,13 @@ Pandoc
   , Para [ Strong [ Str "D" ] , Str "\8239:" ]
   , Para [ Strikeout [ Str "E" ] , Str "\8239:" ]
   , Para [ Code ( "" , [] , [] ) "F" , Str "\8239;" ]
+  , Para
+      [ RawInline (Format "tex") "\\faBook " , Str "\8239?" ]
+  , Para
+      [ RawInline (Format "html") "<i class=\"H\">"
+      , RawInline (Format "html") "</i>"
+      , Str "\8239!"
+      ]
   , Para [ Str "\171\8239Bonjour\8239\187" ]
   , Para
       [ Str "Voici"
