@@ -54,4 +54,13 @@ Pandoc
           ( "https://example.com" , "" )
       , Str "\8239;"
       ]
+  , Para [ Str "(cela)\8239;" ]
+  , Para
+      [ Str "("
+      , Link
+          ( "" , [] , [] )
+          [ Str "lien" ]
+          ( "https://example.com" , "" )
+      , Str ")\8239;"
+      ]
   ]

@@ -37,3 +37,7 @@ Voici un vrai cas: allô!
 [@avge16a]:
 
 [lien](https://example.com);
+
+(cela);
+
+([lien](https://example.com));
