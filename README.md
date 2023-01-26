@@ -11,7 +11,7 @@ when needed.
 
 [Lua filter]: https://pandoc.org/MANUAL.html#option--lua-filter
 
-[CI badge]: https://img.shields.io/github/workflow/status/fuhrmanator/pandoc-filter-fr-nbsp/CI?logo=github
+[CI badge]: https://img.shields.io/github/actions/workflow/status/fuhrmanator/pandoc-filter-fr-nbsp/ci.yaml?logo=github
 
 [CI workflow]: https://github.com/fuhrmanator/pandoc-filter-fr-nbsp/actions/workflows/ci.yaml
 
