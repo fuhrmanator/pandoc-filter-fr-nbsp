@@ -34,6 +34,8 @@ Voici un vrai cas: allô!
 
 "Bonjour!"
 
+(Salut! Bonjour!).
+
 [@avge16a]:
 
 [lien](https://example.com);
