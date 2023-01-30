@@ -64,4 +64,22 @@ Pandoc
           ( "https://example.com" , "" )
       , Str ")\8239;"
       ]
+  , Para
+      [ Str "(voir"
+      , Space
+      , Str "la"
+      , Space
+      , Cite
+          [ Citation
+              { citationId = "fig-main_des"
+              , citationPrefix = []
+              , citationSuffix = []
+              , citationMode = AuthorInText
+              , citationNoteNum = 2
+              , citationHash = 0
+              }
+          ]
+          [ Str "@fig-main_des" ]
+      , Str ")\8239:"
+      ]
   ]
