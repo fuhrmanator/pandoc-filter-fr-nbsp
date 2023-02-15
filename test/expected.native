@@ -4,14 +4,14 @@ Pandoc
   , Para [ Str "a\8239;" ]
   , Para [ Str "b\8239!" ]
   , Para [ Str "c\8239?" ]
-  , Para [ Str "d\8239:" ]
-  , Para [ Str "1\8239%" ]
-  , Para [ Str "2\8239\8364" ]
-  , Para [ Quoted DoubleQuote [ Str "A" ] , Str "\8239:" ]
+  , Para [ Str "d\160:" ]
+  , Para [ Str "1\160%" ]
+  , Para [ Str "2\160\8364" ]
+  , Para [ Quoted DoubleQuote [ Str "A" ] , Str "\160:" ]
   , Para [ Quoted SingleQuote [ Str "B" ] , Str "\8239;" ]
-  , Para [ Emph [ Str "C" ] , Str "\8239:" ]
-  , Para [ Strong [ Str "D" ] , Str "\8239:" ]
-  , Para [ Strikeout [ Str "E" ] , Str "\8239:" ]
+  , Para [ Emph [ Str "C" ] , Str "\160:" ]
+  , Para [ Strong [ Str "D" ] , Str "\160:" ]
+  , Para [ Strikeout [ Str "E" ] , Str "\160:" ]
   , Para [ Code ( "" , [] , [] ) "F" , Str "\8239;" ]
   , Para
       [ RawInline (Format "tex") "\\faBook " , Str "\8239?" ]
@@ -20,7 +20,7 @@ Pandoc
       , RawInline (Format "html") "</i>"
       , Str "\8239!"
       ]
-  , Para [ Str "\171\8239Bonjour\8239\187" ]
+  , Para [ Str "\171\160Bonjour\160\187" ]
   , Para
       [ Str "Voici"
       , Space
@@ -28,7 +28,7 @@ Pandoc
       , Space
       , Str "vrai"
       , Space
-      , Str "cas\8239:"
+      , Str "cas\160:"
       , Space
       , Str "all\244\8239!"
       ]
@@ -46,7 +46,7 @@ Pandoc
               }
           ]
           [ Str "[@avge16a]" ]
-      , Str "\8239:"
+      , Str "\160:"
       ]
   , Para
       [ Link
@@ -80,6 +80,6 @@ Pandoc
               }
           ]
           [ Str "@fig-main_des" ]
-      , Str ")\8239:"
+      , Str ")\160:"
       ]
   ]
