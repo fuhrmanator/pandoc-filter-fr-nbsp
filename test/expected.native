@@ -57,6 +57,7 @@ Pandoc
       ]
   , Para [ Str "(cela)\8239;" ]
   , Para [ Str "(ceci)\160:" ]
+  , Para [ Str "(5\160\8364)." ]
   , Para
       [ Str "("
       , Link

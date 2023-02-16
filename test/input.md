@@ -44,6 +44,8 @@ Voici un vrai cas: allô!
 
 (ceci):
 
+(5€).
+
 ([lien](https://example.com));
 
 (voir la @fig-main_des):
