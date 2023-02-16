@@ -42,6 +42,8 @@ Voici un vrai cas: allô!
 
 (cela);
 
+(ceci):
+
 ([lien](https://example.com));
 
 (voir la @fig-main_des):
