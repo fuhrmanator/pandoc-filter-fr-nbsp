@@ -28,8 +28,9 @@ local function insert_nonbreaking_space_before_last_char(text)
 end
 
 local function string_already_has_nbsp(text)
-    return string.find(text, THIN_NBSP)
-        or string.find(text, NBSP)
+    -- check no nbsp in last 3 characters (so that ?! works)
+    return string.find(text:sub(-3), THIN_NBSP)
+        or string.find(text:sub(-3), NBSP)
 end
 
 --- add non-breaking spaces according to high punctuation rules, similar to babel-french
