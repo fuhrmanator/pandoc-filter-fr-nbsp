@@ -8,8 +8,8 @@
 
 PANDOC_VERSION:must_be_at_least '2.9.2'
 
-local THIN_SPACE_PATTERN_ASCII = '[;!%?]'
-local WIDE_SPACE_PATTERN_ASCII = '[%%:]'
+local THIN_SPACE_PATTERN_ASCII = '[:;!%?]'
+local WIDE_SPACE_PATTERN_ASCII = '[%%]'
 local ALL_SPACE_PATTERN_ASCII = '[;!%?%%:]'
 local THIN_NBSP = '\u{202f}'
 local NBSP = '\u{00A0}'
@@ -28,9 +28,13 @@ local function insert_nonbreaking_space_before_last_char(text)
 end
 
 local function string_already_has_nbsp(text)
-    -- check no nbsp in last 3 characters (so that ?! works)
+    --[[ aarc: I think this overgeneralises:
+    return string.find(text, THIN_NBSP)
+        or string.find(text, NBSP)
+        ]] -- So instead I look back only three characters (so that ?! works)
     return string.find(text:sub(-3), THIN_NBSP)
         or string.find(text:sub(-3), NBSP)
+        or string.find(text:sub(-2), [[\]]) -- allows punctuation spacing to be escaped, e.g. '\:''
 end
 
 --- add non-breaking spaces according to high punctuation rules, similar to babel-french
@@ -71,12 +75,11 @@ local function space_high_punctuation_and_quotes(inlines)
         end
 
         --- special case where string is terminated by parentheses, e.g., "Bonjour!)"
-
         if inlines[i].t == 'Str' and string.find(inlines[i].text, '.*' .. ALL_SPACE_PATTERN_ASCII .. '%)') then
             -- print("Found: ", inlines[i].text)
             -- capture what's in the parens
             _, _, inside = string.find(inlines[i].text,
-                '(.*' .. ALL_SPACE_PATTERN_ASCII .. ')%)')
+                '(.*' .. ALL_SPACE_PATTERN_ASCII .. ')%)') -- aarc: is this a mistake for '%)'?
             inside = inside:sub(1, -2) .. THIN_NBSP .. inside:sub( -1)
             inlines[i].text = inside .. ')'
         end
