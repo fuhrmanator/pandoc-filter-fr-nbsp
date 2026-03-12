@@ -3,67 +3,57 @@
 --- Copyright: © 2022 Romain Lesur
 --- License: MIT – see LICENSE for details
 
---- Copyright: © 2022 Christopher Fuhrman
---- License: MIT – see LICENSE for details
-
 PANDOC_VERSION:must_be_at_least '2.9.2'
 
-local THIN_SPACE_PATTERN_ASCII = '[;!%?]'
-local WIDE_SPACE_PATTERN_ASCII = '[%%:]'
-local ALL_SPACE_PATTERN_ASCII = '[;!%?%%:]'
-local THIN_NBSP = '\u{202f}'
-local NBSP = '\u{00A0}'
 
-local function determine_space_type(character)
-    local space = NBSP
-    if (string.match(character, THIN_SPACE_PATTERN_ASCII)) then
-        space = THIN_NBSP
-    end
-    return space
-end
-
-local function insert_nonbreaking_space_before_last_char(text)
-    local space = determine_space_type(text:sub( -1))
-    return text:sub(1, -2) .. space .. text:sub( -1)
-end
-
-local function string_already_has_nbsp(text)
-    return string.find(text, THIN_NBSP)
-        or string.find(text, NBSP)
-end
-
+--- Copyright: © 2022 Christopher Fuhrman
+--- License: MIT – see LICENSE for details
 --- add non-breaking spaces according to high punctuation rules, similar to babel-french
-local function space_high_punctuation_and_quotes(inlines)
+local function space_high_punctuation_and_quotes(inlines, use_regular_space)
     local i = 1
     -- local already_spaced = false
+    local ascii_punctuation_pattern = '[;!%?%%:]'
+    local nbsp = use_regular_space and ' ' or '\u{202f}'
     while inlines[i] do
         -- print(i, '//', inlines[i], '//', i+1,  '//', inlines[i+1], '//')
-        if inlines[i].t == 'Str' and not string_already_has_nbsp(inlines[i].text) then
-            if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub( -1), ALL_SPACE_PATTERN_ASCII) then
-                -- print(inlines[i].text:sub(-1))
-                -- print(i, 'fixing (2):', inlines[i])
-                inlines[i].text = insert_nonbreaking_space_before_last_char(
-                    inlines[i].text)
+        -- punctuation after parentheses, e.g., ([Markup](https://example.com));
+        if inlines[i+1] and
+            inlines[i+1].t == 'Str' and
+            inlines[i+1].text == ');' and
+            (string.match(inlines[i+1].text:sub(-1), ascii_punctuation_pattern)) then
+                -- print(i, "fixing:", inlines[i+1])
+                inlines[i+1].text = inlines[i+1].text:sub(1, -2) .. nbsp .. inlines[i+1].text:sub(-1)
+                -- already_spaced = true
+        else
+            -- ignore if nbsp is already in string
+            if inlines[i].t == 'Str' and not string.find(inlines[i].text, nbsp) then
+                if string.len(inlines[i].text) > 1 and string.match(inlines[i].text:sub(-1), ascii_punctuation_pattern) then
+                    -- print(inlines[i].text:sub(-1))
+                    -- insert nbsp before last char
+                    -- print(i, 'fixing (2):', inlines[i])
+                    inlines[i].text = inlines[i].text:sub(1, -2) .. nbsp .. inlines[i].text:sub(-1)
+                    -- already_spaced = true
+                end
+                -- unicode is a problem in patterns, so we just brute force it?
+                inlines[i].text = string.gsub(inlines[i].text, "€", nbsp .. "€")
+                inlines[i].text = string.gsub(inlines[i].text, "»", nbsp .. "»")
+                inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. nbsp)
             end
-            -- unicode is a problem in patterns, so we just brute force it?
-            inlines[i].text = string.gsub(inlines[i].text, "€", NBSP .. "€")
-            inlines[i].text = string.gsub(inlines[i].text, "»", NBSP .. "»")
-            inlines[i].text = string.gsub(inlines[i].text, "«", "«" .. NBSP)
         end
 
         --
         -- special cases where punctuation can follow
         --
 
-        if inlines[i + 1] and inlines[i + 1].t == 'Str' and not string.find(inlines[i + 1].text, THIN_NBSP) -- didn't already insert THIN_NBSP
-            and (inlines[i].t == 'Quoted' or inlines[i].t == 'Cite' or inlines[i].t == 'Link' or inlines[i].t == 'Emph' or inlines[i].t == 'Strong' or inlines[i].t == 'Strikeout' or inlines[i].t == 'Code' or inlines[i].t == 'RawInline')
-            and string.match(inlines[i + 1].text:sub( -1), ALL_SPACE_PATTERN_ASCII) then
-            if (string.len(inlines[i + 1].text) == 1) then
+        if inlines[i+1] and inlines[i+1].t == 'Str' and not string.find(inlines[i+1].text, nbsp) -- didn't already insert nbsp
+           and (inlines[i].t == 'Quoted' or inlines[i].t == 'Cite' or inlines[i].t == 'Link' or inlines[i].t == 'Emph' or inlines[i].t == 'Strong' or inlines[i].t == 'Strikeout' or inlines[i].t == 'Code' or inlines[i].t == 'RawInline')
+           and string.match(inlines[i+1].text:sub(-1), ascii_punctuation_pattern) then
+            if (string.len(inlines[i+1].text) == 1) then
                 -- print(i, 'fixing (3):', inlines[i+1])
-                inlines[i + 1].text = determine_space_type(inlines[i + 1].text) .. inlines[i + 1].text
+                inlines[i+1].text = nbsp .. inlines[i+1].text
             else
                 -- print(i, 'fixing (4) -- should be parens:', inlines[i+1])
-                inlines[i + 1].text = insert_nonbreaking_space_before_last_char(inlines[i + 1].text)
+                inlines[i+1].text = inlines[i+1].text:sub(1, -2) .. nbsp .. inlines[i+1].text:sub(-1)
             end
             -- skip the item we just spaced
             i = i + 1
@@ -71,15 +61,25 @@ local function space_high_punctuation_and_quotes(inlines)
 
         --- special case where string is terminated by parentheses, e.g., "Bonjour!)"
 
-        if inlines[i].t == 'Str' and string.find(inlines[i].text, '.*' .. ALL_SPACE_PATTERN_ASCII .. '%)') then
+        if inlines[i].t == 'Str' and string.find(inlines[i].text, '.*'.. ascii_punctuation_pattern .. '%)') then
             -- print("Found: ", inlines[i].text)
             -- capture what's in the parens
-            _, _, inside = string.find(inlines[i].text,
-                '(.*' .. ALL_SPACE_PATTERN_ASCII .. ')%)')
-            inside = inside:sub(1, -2) .. THIN_NBSP .. inside:sub( -1)
+            _, _, inside = string.find(inlines[i].text, '(.*'.. ascii_punctuation_pattern .. ')%)')
+            inside = inside:sub(1, -2) .. nbsp .. inside:sub(-1)
             inlines[i].text = inside .. ')'
         end
         i = i + 1
+    end
+    return inlines
+end
+
+-- Clean metadata by replacing thin NBSP with regular spaces for LaTeX/PDF
+local function clean_metadata_for_latex(inlines)
+    for i = 1, #inlines, 1 do
+        if inlines[i].t == 'Str' then
+            -- Replace thin NBSP (U+202F) with regular space
+            inlines[i].text = string.gsub(inlines[i].text, '\u{202f}', ' ')
+        end
     end
     return inlines
 end
@@ -92,33 +92,36 @@ end
 local function wrap_nnbsp_in_span(inlines)
     for i = 1, #inlines, 1 do
         if inlines[i].t == 'Str' and string.match(inlines[i].text, '\226\128\175') then
-            inlines[i] = pandoc.RawInline('html',
-                "<span style='white-space:nowrap'>" ..
-                string.gsub(inlines[i].text, '\226\128\175', '&thinsp;') ..
-                '</span>')
+            inlines[i] = pandoc.RawInline('html', "<span style='white-space:nowrap'>" .. string.gsub(inlines[i].text, '\226\128\175', '&thinsp;') .. '</span>')
         end
     end
     return inlines
 end
 
+local is_html = FORMAT:match 'html' or FORMAT:match 'html5'
 
-if FORMAT:match 'html' or FORMAT:match 'html5' then
-    return {
-        {
-            Inlines = function(inlines)
-                inlines = space_high_punctuation_and_quotes(inlines)
+return {
+    {
+        Meta = function(meta)
+            if meta.title then
+                if is_html then
+                    -- For HTML, use thin NBSP and wrap in spans
+                    meta.title = space_high_punctuation_and_quotes(meta.title, false)
+                    meta.title = wrap_nnbsp_in_span(meta.title)
+                else
+                    -- For LaTeX/PDF, first apply French typography with thin NBSP, then convert to regular spaces
+                    meta.title = space_high_punctuation_and_quotes(meta.title, false)
+                    meta.title = clean_metadata_for_latex(meta.title)
+                end
+            end
+            return meta
+        end,
+        Inlines = function(inlines)
+            inlines = space_high_punctuation_and_quotes(inlines, false)  -- Always use thin NBSP in body
+            if is_html then
                 inlines = wrap_nnbsp_in_span(inlines)
-                return inlines
             end
-        }
+            return inlines
+        end
     }
-else
-    return {
-        {
-            Inlines = function(inlines)
-                inlines = space_high_punctuation_and_quotes(inlines)
-                return inlines
-            end
-        }
-    }
-end
+}
